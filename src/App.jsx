@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import RestaurantCard from './RestaurantCard'
 import './App.css'
 
-// Use environment-based API URL with fallback for Render deployment
+// Use environment-based API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
   (import.meta.env.PROD 
-    ? 'https://restaurant-prank-backend.onrender.com'  // Will be updated with actual Render URL
-    : 'http://localhost:3001')
+    ? 'https://restaurant-prank-backend.onrender.com/api'  // Added /api path
+    : 'http://localhost:3001/api')
 
 function App() {
   const [votes, setVotes] = useState(null)
