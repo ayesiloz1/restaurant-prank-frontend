@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import RestaurantCard from './RestaurantCard'
 import './App.css'
 
-// Use environment-based API URL
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://restaurant-prank-backend-production-abc123.up.railway.app/api'  // Replace with YOUR Railway URL
-  : 'http://localhost:3001/api'
+// Use environment-based API URL with fallback for Render deployment
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.PROD 
+    ? 'https://restaurant-prank-backend.onrender.com'  // Will be updated with actual Render URL
+    : 'http://localhost:3001')
 
 function App() {
   const [votes, setVotes] = useState(null)
