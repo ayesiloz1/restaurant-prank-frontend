@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 
-const RestaurantCard = ({ restaurant, votes, onVote, lastVoted }) => {
+const RestaurantCard = ({ restaurant, votes, onVote, lastVoted, disabled }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
   const [dodgeCount, setDodgeCount] = useState(0)
@@ -59,6 +59,9 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted }) => {
 
   // Handle click
   const handleClick = () => {
+    // Don't allow any interactions if disabled
+    if (disabled) return
+    
     console.log('RestaurantCard clicked:', name, 'dodges:', dodges)
     
     if (dodges) {
@@ -75,7 +78,7 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted }) => {
     } else {
       // Only Chick-fil-A allows voting
       console.log('Calling onVote for:', name)
-      onVote(name)
+      if (onVote) onVote(name)
     }
   }
 
@@ -98,13 +101,13 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted }) => {
     >
       <div
         ref={cardRef}
-        className={`restaurant-card ${dodges ? 'dodging' : 'stationary'} ${isHovered ? 'hovered' : ''} ${lastVoted ? 'just-voted' : ''}`}
+        className={`restaurant-card ${dodges ? 'dodging' : 'stationary'} ${isHovered ? 'hovered' : ''} ${lastVoted ? 'just-voted' : ''} ${disabled ? 'disabled' : ''}`}
         style={dodges ? {
           transform: `translate(${position.x}px, ${position.y}px)`,
           transition: isHovered ? 'transform 0.4s ease-out' : 'none'
         } : {}}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={disabled ? undefined : handleMouseEnter}
+        onMouseLeave={disabled ? undefined : handleMouseLeave}
         onClick={handleClick}
       >
         <div className="restaurant-info">
@@ -112,6 +115,7 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted }) => {
             <h3 className="restaurant-name">{name}</h3>
             <div className="restaurant-details">
               <span className="restaurant-category">{category}</span>
+              <span className="vote-count">{votes} votes</span>
             </div>
           </div>
         </div>

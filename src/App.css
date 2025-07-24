@@ -138,6 +138,36 @@ body {
   }
 }
 
+/* Thank You Message */
+.thank-you-message {
+  background: linear-gradient(45deg, #10b981, #059669);
+  color: white;
+  text-align: center;
+  padding: 16px 24px;
+  margin: 20px auto;
+  max-width: 600px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  animation: slideInDown 0.5s ease-out;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Already Voted Message */
+.already-voted-message {
+  background: linear-gradient(45deg, #3b82f6, #2563eb);
+  color: white;
+  text-align: center;
+  padding: 16px 24px;
+  margin: 20px auto;
+  max-width: 600px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  animation: slideInDown 0.5s ease-out;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+}
+
 /* Stats Section */
 .stats-container {
   max-width: 1200px;
@@ -264,6 +294,16 @@ body {
   animation: voteSuccess 1s ease-out;
 }
 
+.restaurant-card.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.restaurant-card.disabled:hover {
+  transform: translate(-50%, -50%) scale(1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
 @keyframes voteSuccess {
   0% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.05); }
@@ -296,8 +336,10 @@ body {
 
 .restaurant-details {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
 }
 
 .restaurant-category {
@@ -316,7 +358,13 @@ body {
 }
 
 .vote-count {
-  display: none;
+  color: #059669;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(5, 150, 105, 0.1);
+  padding: 1px 4px;
+  border-radius: 3px;
 }
 
 .vote-label {

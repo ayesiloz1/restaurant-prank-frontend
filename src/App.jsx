@@ -14,6 +14,16 @@ function App() {
   const [error, setError] = useState(null)
   const [lastVoted, setLastVoted] = useState('')
   const [showThankYou, setShowThankYou] = useState(false)
+  const [hasVoted, setHasVoted] = useState(false)
+
+  // Check if user has already voted (using localStorage)
+  useEffect(() => {
+    const userHasVoted = localStorage.getItem('restaurant-prank-voted')
+    if (userHasVoted) {
+      setHasVoted(true)
+      setLastVoted(userHasVoted)
+    }
+  }, [])
 
   // List of restaurants - Chick-fil-A is the only one that doesn't dodge!
   const restaurants = [
@@ -25,10 +35,7 @@ function App() {
     { name: "Domino's Pizza", category: "Pizza", rating: 4.4, dodges: true },
     { name: "Taco Bell", category: "Mexican", rating: 4.0, dodges: true },
     { name: "Wendy's", category: "Fast Food", rating: 4.2, dodges: true },
-    { name: "Chick-fil-A", category: "Chicken", rating: 4.6, dodges: false }, // The chosen one!
-    { name: "Chipotle Mexican Grill", category: "Mexican", rating: 4.1, dodges: true },
-    { name: "Five Guys", category: "Burgers", rating: 4.3, dodges: true },
-    { name: "In-N-Out Burger", category: "Burgers", rating: 4.5, dodges: true }
+    { name: "Chick-fil-A", category: "Chicken", rating: 4.6, dodges: false } // The chosen one!
   ]
 
   // Fetch votes data
@@ -52,6 +59,11 @@ function App() {
 
   // Cast a vote
   const castVote = async (restaurant) => {
+    // Prevent voting if user has already voted
+    if (hasVoted) {
+      return
+    }
+
     console.log('castVote called for:', restaurant)
     try {
       console.log('Making API request to:', `${API_BASE_URL}/vote`)
@@ -82,7 +94,11 @@ function App() {
       }
       
       setLastVoted(restaurant)
+      setHasVoted(true)
       setShowThankYou(true)
+      
+      // Store vote in localStorage to prevent multiple votes
+      localStorage.setItem('restaurant-prank-voted', restaurant)
       
       // Hide thank you message after 3 seconds
       setTimeout(() => setShowThankYou(false), 3000)
@@ -95,27 +111,7 @@ function App() {
     }
   }
 
-  // Reset votes (admin function)
-  const resetVotes = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/reset`, {
-        method: 'POST',
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to reset votes')
-      }
-
-      const data = await response.json()
-      setVotes(data)
-      setLastVoted('')
-      setShowThankYou(false)
-      setError(null)
-    } catch (err) {
-      setError(err.message)
-      console.error('Error resetting votes:', err)
-    }
-  }
+  // Reset votes (admin function) - REMOVED FOR PRODUCTION
 
   // Load votes on component mount
   useEffect(() => {
@@ -160,14 +156,17 @@ function App() {
               <span className="label">Total Votes Cast:</span>
               <span className="count">{votes?.totalVotes || 0}</span>
             </div>
-            <button onClick={resetVotes} className="admin-btn">
-              Reset Results
-            </button>
           </div>
         </div>
       </div>
 
-      {showThankYou && (
+      {hasVoted && (
+        <div className="already-voted-message">
+          🗳️ You have already voted for {lastVoted}! Here are the current results:
+        </div>
+      )}
+
+      {showThankYou && !hasVoted && (
         <div className="thank-you-message">
           ✅ Thank you for voting for {lastVoted}! Your vote has been recorded.
         </div>
@@ -179,8 +178,9 @@ function App() {
             key={restaurant.name}
             restaurant={restaurant}
             votes={votes?.restaurants?.[restaurant.name] || 0}
-            onVote={castVote}
+            onVote={hasVoted ? null : castVote}
             lastVoted={lastVoted === restaurant.name}
+            disabled={hasVoted}
           />
         ))}
       </div>
