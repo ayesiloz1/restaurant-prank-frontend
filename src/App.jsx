@@ -327,8 +327,7 @@ function App() {
               {/* Arrow pointing to Chick-fil-A (last item) */}
               {index === restaurants.length - 1 && (
                 <div className="chick-fil-a-arrow">
-                  <div className="arrow-text">👈 The only one that works! 😏</div>
-                  <div className="arrow-emoji">🎯</div>
+                  <div className="arrow-emoji">👈</div>
                 </div>
               )}
             </div>

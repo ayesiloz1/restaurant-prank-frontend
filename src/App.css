@@ -488,8 +488,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  align-items: flex-start; /* Changed from center to left-align */
-  padding-left: 40px; /* Add left padding to shift everything right a bit */
+  align-items: center; /* Changed back to center alignment */
 }
 
 /* Restaurant Row (contains card + arrow) */
@@ -498,6 +497,7 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center; /* Center the restaurant cards */
 }
 
 /* Restaurant Card Container */
@@ -724,7 +724,6 @@ body {
     padding: 15px;
     max-width: 100%;
     gap: 10px;
-    padding-left: 20px; /* Maintain left alignment on mobile */
   }
   
   .stats {
@@ -821,7 +820,6 @@ body {
     max-width: 100%;
     padding: 10px;
     gap: 8px;
-    padding-left: 15px; /* Maintain left alignment on smaller mobile */
   }
   
   .stats {
@@ -875,7 +873,6 @@ body {
   
   .restaurants-grid {
     gap: 6px;
-    padding-left: 10px; /* Maintain left alignment on very small screens */
   }
   
   .restaurant-card-container {
@@ -906,25 +903,12 @@ body {
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 8px;
   z-index: 10;
   animation: arrowBounce 2s ease-in-out infinite;
 }
 
-.arrow-text {
-  background: linear-gradient(45deg, #ff6b35, #ff8e53);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
-  border: 2px solid #ff4500;
-}
-
 .arrow-emoji {
-  font-size: 1.5rem;
+  font-size: 2rem;
   animation: arrowPulse 1.5s ease-in-out infinite;
 }
 
@@ -957,30 +941,18 @@ body {
     left: 280px;
   }
   
-  .arrow-text {
-    font-size: 0.75rem;
-    padding: 4px 8px;
-  }
-  
   .arrow-emoji {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
   }
 }
 
 @media (max-width: 480px) {
   .chick-fil-a-arrow {
     left: 240px;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .arrow-text {
-    font-size: 0.7rem;
-    padding: 3px 6px;
   }
   
   .arrow-emoji {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 }
 
@@ -989,8 +961,7 @@ body {
     left: 200px;
   }
   
-  .arrow-text {
-    font-size: 0.65rem;
-    padding: 2px 5px;
+  .arrow-emoji {
+    font-size: 1.3rem;
   }
 }
