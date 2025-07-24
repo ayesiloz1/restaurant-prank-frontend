@@ -61,6 +61,7 @@ function App() {
   const castVote = async (restaurant) => {
     // Prevent voting if user has already voted
     if (hasVoted) {
+      console.log('User has already voted, blocking vote attempt')
       return
     }
 
@@ -93,15 +94,14 @@ function App() {
         setVotes(data)
       }
       
+      // Set voting state immediately to prevent double voting
       setLastVoted(restaurant)
       setHasVoted(true)
       setShowThankYou(true)
       
       // Store vote in localStorage to prevent multiple votes
       localStorage.setItem('restaurant-prank-voted', restaurant)
-      
-      // Hide thank you message after 3 seconds
-      setTimeout(() => setShowThankYou(false), 3000)
+      localStorage.setItem('restaurant-prank-voted-timestamp', Date.now().toString())
       
       setError(null)
     } catch (err) {
@@ -149,41 +149,63 @@ function App() {
     <div className="app">
       <div className="app-header">
         <h1>Vote for restaurant you would like to eat</h1>
-        
-        <div className="stats-container">
-          <div className="stats">
-            <div className="total-votes">
-              <span className="label">Total Votes Cast:</span>
-              <span className="count">{votes?.totalVotes || 0}</span>
-            </div>
-          </div>
-        </div>
       </div>
+
+      {!hasVoted && (
+        <div className="voting-instructions">
+          Click on your favorite restaurant to vote! 🍽️
+        </div>
+      )}
 
       {hasVoted && (
-        <div className="already-voted-message">
-          🗳️ You have already voted for {lastVoted}! Here are the current results:
+        <div className="thank-you-section">
+          <div className="thank-you-message">
+            🎉 Thank you for voting for {lastVoted}!
+          </div>
+          <div className="results-title">
+            🏆 Current Results
+          </div>
+          <div className="results-chart">
+            {restaurants
+              .sort((a, b) => (votes?.restaurants?.[b.name] || 0) - (votes?.restaurants?.[a.name] || 0))
+              .map((restaurant, index) => {
+                const voteCount = votes?.restaurants?.[restaurant.name] || 0;
+                const maxVotes = Math.max(...restaurants.map(r => votes?.restaurants?.[r.name] || 0));
+                const percentage = maxVotes > 0 ? (voteCount / maxVotes) * 100 : 0;
+                
+                return (
+                  <div key={restaurant.name} className="result-bar">
+                    <div className="result-info">
+                      <span className="restaurant-name">{restaurant.name}</span>
+                      <span className="vote-count">{voteCount} votes</span>
+                    </div>
+                    <div className="bar-container">
+                      <div 
+                        className={`bar ${index === 0 && voteCount > 0 ? 'winner' : ''}`}
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       )}
 
-      {showThankYou && !hasVoted && (
-        <div className="thank-you-message">
-          ✅ Thank you for voting for {lastVoted}! Your vote has been recorded.
+      {!hasVoted && (
+        <div className="restaurants-grid">
+          {restaurants.map((restaurant) => (
+            <RestaurantCard
+              key={restaurant.name}
+              restaurant={restaurant}
+              votes={votes?.restaurants?.[restaurant.name] || 0}
+              onVote={castVote}
+              lastVoted={lastVoted === restaurant.name}
+              disabled={hasVoted}
+            />
+          ))}
         </div>
       )}
-
-      <div className="restaurants-grid">
-        {restaurants.map((restaurant) => (
-          <RestaurantCard
-            key={restaurant.name}
-            restaurant={restaurant}
-            votes={votes?.restaurants?.[restaurant.name] || 0}
-            onVote={hasVoted ? null : castVote}
-            lastVoted={lastVoted === restaurant.name}
-            disabled={hasVoted}
-          />
-        ))}
-      </div>
     </div>
   )
 }
