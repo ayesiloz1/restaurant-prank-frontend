@@ -15,6 +15,18 @@ function App() {
   const [lastVoted, setLastVoted] = useState('')
   const [showThankYou, setShowThankYou] = useState(false)
   const [hasVoted, setHasVoted] = useState(false)
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
+
+  // Secret admin panel toggle (Ctrl+Alt+R)
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'r') {
+        setShowAdminPanel(prev => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [])
 
   // Check if user has already voted (using localStorage)
   useEffect(() => {
@@ -111,7 +123,32 @@ function App() {
     }
   }
 
-  // Reset votes (admin function) - REMOVED FOR PRODUCTION
+  // Admin reset function (hidden)
+  const resetAllVotes = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/reset`, {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to reset votes')
+      }
+
+      const data = await response.json()
+      setVotes(data)
+      
+      // Clear localStorage for all users on next visit
+      localStorage.removeItem('restaurant-prank-voted')
+      localStorage.removeItem('restaurant-prank-voted-timestamp')
+      setHasVoted(false)
+      setLastVoted('')
+      setShowThankYou(false)
+      setError(null)
+    } catch (err) {
+      setError(err.message)
+      console.error('Error resetting votes:', err)
+    }
+  }
 
   // Load votes on component mount
   useEffect(() => {
@@ -150,6 +187,16 @@ function App() {
       <div className="app-header">
         <h1>Vote for restaurant you would like to eat</h1>
       </div>
+
+      {showAdminPanel && (
+        <div className="admin-panel">
+          <h3>🔧 Admin Panel</h3>
+          <button onClick={resetAllVotes} className="reset-btn">
+            Reset All Votes
+          </button>
+          <small>Press Ctrl+Alt+R to hide</small>
+        </div>
+      )}
 
       {!hasVoted && (
         <div className="voting-instructions">
