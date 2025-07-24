@@ -315,15 +315,23 @@ function App() {
 
       {!hasVoted && (
         <div className="restaurants-grid">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard
-              key={restaurant.name}
-              restaurant={restaurant}
-              votes={votes?.restaurants?.[restaurant.name] || 0}
-              onVote={castVote}
-              lastVoted={lastVoted === restaurant.name}
-              disabled={hasVoted}
-            />
+          {restaurants.map((restaurant, index) => (
+            <div key={restaurant.name} className="restaurant-row">
+              <RestaurantCard
+                restaurant={restaurant}
+                votes={votes?.restaurants?.[restaurant.name] || 0}
+                onVote={castVote}
+                lastVoted={lastVoted === restaurant.name}
+                disabled={hasVoted}
+              />
+              {/* Arrow pointing to Chick-fil-A (last item) */}
+              {index === restaurants.length - 1 && (
+                <div className="chick-fil-a-arrow">
+                  <div className="arrow-text">👈 The only one that works! 😏</div>
+                  <div className="arrow-emoji">🎯</div>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}

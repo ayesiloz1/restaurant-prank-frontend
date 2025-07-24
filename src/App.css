@@ -482,12 +482,21 @@ body {
 
 /* Restaurants Grid */
 .restaurants-grid {
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-items: flex-start; /* Changed from center to left-align */
+  padding-left: 40px; /* Add left padding to shift everything right a bit */
+}
+
+/* Restaurant Row (contains card + arrow) */
+.restaurant-row {
+  position: relative;
+  width: 100%;
+  display: flex;
   align-items: center;
 }
 
@@ -715,6 +724,7 @@ body {
     padding: 15px;
     max-width: 100%;
     gap: 10px;
+    padding-left: 20px; /* Maintain left alignment on mobile */
   }
   
   .stats {
@@ -811,6 +821,7 @@ body {
     max-width: 100%;
     padding: 10px;
     gap: 8px;
+    padding-left: 15px; /* Maintain left alignment on smaller mobile */
   }
   
   .stats {
@@ -864,6 +875,7 @@ body {
   
   .restaurants-grid {
     gap: 6px;
+    padding-left: 10px; /* Maintain left alignment on very small screens */
   }
   
   .restaurant-card-container {
@@ -883,5 +895,102 @@ body {
   
   .restaurant-category {
     font-size: 0.6rem;
+  }
+}
+
+/* Chick-fil-A Arrow Styles */
+.chick-fil-a-arrow {
+  position: absolute;
+  left: 320px; /* Position to the right of the restaurant card */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+  animation: arrowBounce 2s ease-in-out infinite;
+}
+
+.arrow-text {
+  background: linear-gradient(45deg, #ff6b35, #ff8e53);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  border: 2px solid #ff4500;
+}
+
+.arrow-emoji {
+  font-size: 1.5rem;
+  animation: arrowPulse 1.5s ease-in-out infinite;
+}
+
+/* Arrow bounce animation */
+@keyframes arrowBounce {
+  0%, 50%, 100% {
+    transform: translateY(-50%) translateX(0);
+  }
+  25% {
+    transform: translateY(-50%) translateX(-5px);
+  }
+  75% {
+    transform: translateY(-50%) translateX(5px);
+  }
+}
+
+/* Arrow emoji pulse animation */
+@keyframes arrowPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Mobile adjustments for arrow */
+@media (max-width: 768px) {
+  .chick-fil-a-arrow {
+    left: 280px;
+  }
+  
+  .arrow-text {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  
+  .arrow-emoji {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chick-fil-a-arrow {
+    left: 240px;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .arrow-text {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+  
+  .arrow-emoji {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .chick-fil-a-arrow {
+    left: 200px;
+  }
+  
+  .arrow-text {
+    font-size: 0.65rem;
+    padding: 2px 5px;
   }
 }
