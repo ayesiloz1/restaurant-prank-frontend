@@ -18,8 +18,10 @@ function App() {
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [adminPassword, setAdminPassword] = useState('')
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
+  const [showMobileAdmin, setShowMobileAdmin] = useState(false)
+  const [tapCount, setTapCount] = useState(0)
 
-  // Secret admin panel toggle (Ctrl+Alt+R)
+  // Secret admin panel toggle (Ctrl+Alt+R) or mobile tap
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'r') {
@@ -34,6 +36,22 @@ function App() {
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [showAdminPanel])
+
+  // Mobile admin access - tap header 7 times quickly
+  const handleHeaderTap = () => {
+    setTapCount(prev => {
+      const newCount = prev + 1
+      if (newCount >= 7) {
+        setShowMobileAdmin(true)
+        setShowAdminPanel(true)
+        return 0
+      }
+      
+      // Reset tap count after 2 seconds of no tapping
+      setTimeout(() => setTapCount(0), 2000)
+      return newCount
+    })
+  }
 
   // Check if user has already voted (using localStorage)
   useEffect(() => {
@@ -215,7 +233,14 @@ function App() {
   return (
     <div className="app">
       <div className="app-header">
-        <h1>Vote for restaurant you would like to eat</h1>
+        <h1 onClick={handleHeaderTap} style={{ cursor: 'pointer' }}>
+          Vote for restaurant you would like to eat
+        </h1>
+        {tapCount > 0 && tapCount < 7 && (
+          <div className="tap-indicator">
+            Tap {7 - tapCount} more times...
+          </div>
+        )}
       </div>
 
       {showAdminPanel && (
@@ -243,7 +268,7 @@ function App() {
               </button>
             </div>
           )}
-          <small>Press Ctrl+Alt+R to hide</small>
+          <small>Press Ctrl+Alt+R to hide {showMobileAdmin && '(or tap header 7 times)'}</small>
         </div>
       )}
 
