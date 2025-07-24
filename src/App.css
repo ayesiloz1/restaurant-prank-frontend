@@ -206,6 +206,52 @@ body {
   font-size: 0.8rem;
 }
 
+.admin-login {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.password-input {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  outline: none;
+  min-width: 200px;
+}
+
+.password-input:focus {
+  background: white;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.login-btn {
+  background: linear-gradient(45deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.login-btn:hover {
+  background: linear-gradient(45deg, #2563eb, #1d4ed8);
+  transform: translateY(-1px);
+}
+
+.admin-controls p {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #bbf7d0;
+}
+
 .reset-btn {
   background: linear-gradient(45deg, #dc2626, #b91c1c);
   color: white;
@@ -222,6 +268,31 @@ body {
   background: linear-gradient(45deg, #b91c1c, #991b1b);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Laughing Emoji Animation */
+.laugh-emoji {
+  position: absolute;
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 1000;
+  animation: laughFloat 1.5s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes laughFloat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -70px) scale(0.8);
+  }
 }
 
 /* Thank You Section */

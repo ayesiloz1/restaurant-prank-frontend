@@ -16,17 +16,24 @@ function App() {
   const [showThankYou, setShowThankYou] = useState(false)
   const [hasVoted, setHasVoted] = useState(false)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [adminPassword, setAdminPassword] = useState('')
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
 
   // Secret admin panel toggle (Ctrl+Alt+R)
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'r') {
         setShowAdminPanel(prev => !prev)
+        // Reset admin auth when panel is closed
+        if (showAdminPanel) {
+          setIsAdminAuthenticated(false)
+          setAdminPassword('')
+        }
       }
     }
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [])
+  }, [showAdminPanel])
 
   // Check if user has already voted (using localStorage)
   useEffect(() => {
@@ -123,8 +130,28 @@ function App() {
     }
   }
 
+  // Admin authentication
+  const handleAdminLogin = () => {
+    // Simple password check (you can change this password)
+    if (adminPassword === 'admin123') {
+      setIsAdminAuthenticated(true)
+    } else {
+      alert('Incorrect password!')
+      setAdminPassword('')
+    }
+  }
+
   // Admin reset function (hidden)
   const resetAllVotes = async () => {
+    if (!isAdminAuthenticated) {
+      alert('Please authenticate first!')
+      return
+    }
+
+    if (!confirm('Are you sure you want to reset all votes? This cannot be undone!')) {
+      return
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/reset`, {
         method: 'POST',
@@ -137,16 +164,19 @@ function App() {
       const data = await response.json()
       setVotes(data)
       
-      // Clear localStorage for all users on next visit
+      // Clear localStorage for current user
       localStorage.removeItem('restaurant-prank-voted')
       localStorage.removeItem('restaurant-prank-voted-timestamp')
       setHasVoted(false)
       setLastVoted('')
       setShowThankYou(false)
       setError(null)
+      
+      alert('All votes have been reset successfully!')
     } catch (err) {
       setError(err.message)
       console.error('Error resetting votes:', err)
+      alert('Failed to reset votes: ' + err.message)
     }
   }
 
@@ -191,9 +221,28 @@ function App() {
       {showAdminPanel && (
         <div className="admin-panel">
           <h3>🔧 Admin Panel</h3>
-          <button onClick={resetAllVotes} className="reset-btn">
-            Reset All Votes
-          </button>
+          {!isAdminAuthenticated ? (
+            <div className="admin-login">
+              <input
+                type="password"
+                placeholder="Enter admin password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
+                className="password-input"
+              />
+              <button onClick={handleAdminLogin} className="login-btn">
+                Login
+              </button>
+            </div>
+          ) : (
+            <div className="admin-controls">
+              <p>✅ Authenticated as Admin</p>
+              <button onClick={resetAllVotes} className="reset-btn">
+                🗑️ Reset All Votes
+              </button>
+            </div>
+          )}
           <small>Press Ctrl+Alt+R to hide</small>
         </div>
       )}

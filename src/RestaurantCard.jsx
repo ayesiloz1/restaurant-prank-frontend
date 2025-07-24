@@ -4,10 +4,33 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted, disabled }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
   const [dodgeCount, setDodgeCount] = useState(0)
+  const [showLaughEmoji, setShowLaughEmoji] = useState(false)
+  const [laughPosition, setLaughPosition] = useState({ x: 0, y: 0 })
   const cardRef = useRef(null)
   const containerRef = useRef(null)
 
   const { name, category, rating, dodges } = restaurant
+
+  // Function to show laughing emoji
+  const showLaughingEmoji = () => {
+    // Get current card position to place emoji near it
+    if (cardRef.current && containerRef.current) {
+      const cardRect = cardRef.current.getBoundingClientRect()
+      const containerRect = containerRef.current.getBoundingClientRect()
+      
+      setLaughPosition({
+        x: cardRect.left - containerRect.left + cardRect.width / 2,
+        y: cardRect.top - containerRect.top + cardRect.height / 2
+      })
+    }
+    
+    setShowLaughEmoji(true)
+    
+    // Hide emoji after animation
+    setTimeout(() => {
+      setShowLaughEmoji(false)
+    }, 1500)
+  }
 
   // Function to generate random corner position
   const generateRandomPosition = () => {
@@ -36,9 +59,12 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted, disabled }) => {
 
   // Handle mouse enter (hover start)
   const handleMouseEnter = () => {
-    if (!dodges) return // Chick-fil-A doesn't dodge!
+    if (!dodges || disabled) return // Chick-fil-A doesn't dodge, and disabled cards don't respond
     
     setIsHovered(true)
+    
+    // Show laughing emoji
+    showLaughingEmoji()
     
     // Move to random corner position
     const newPosition = generateRandomPosition()
@@ -65,6 +91,9 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted, disabled }) => {
     console.log('RestaurantCard clicked:', name, 'dodges:', dodges)
     
     if (dodges) {
+      // Show laughing emoji first
+      showLaughingEmoji()
+      
       // If it's a dodging restaurant, dodge to corner on click!
       const newPosition = generateRandomPosition()
       setPosition(newPosition)
@@ -126,6 +155,19 @@ const RestaurantCard = ({ restaurant, votes, onVote, lastVoted, disabled }) => {
           </div>
         )}
       </div>
+      
+      {/* Laughing Emoji Animation */}
+      {showLaughEmoji && (
+        <div 
+          className="laugh-emoji"
+          style={{
+            left: `${laughPosition.x}px`,
+            top: `${laughPosition.y}px`
+          }}
+        >
+          😂
+        </div>
+      )}
     </div>
   )
 }
